@@ -66,7 +66,15 @@ int main(int argc, char** argv) {
     return -1;
   }
   fpga_bram = mmap(NULL, (SIZE*(SIZE + 1))* sizeof(float), PROT_WRITE, MAP_SHARED, mem_descriptor, 0x40000000);
-  fpga_ip = mmap(NULL, sizeof(int), PROT_WRITE, MAP_SHARED, mem_descriptor, 0x43c00000);
+  fpga_ip = mmap(NULL, sizeof(float), PROT_WRITE, MAP_SHARED, mem_descriptor, 0x43c00000);
+  for (i = 0; i < SIZE; ++i) {
+    for (j = 0; j < SIZE; ++j) {
+      fpga_bram[i][j] = matrix[i][j];
+    }
+  }
+  for (i = 0; i < SIZE; ++i) {
+    fpga_bram[i+SIZE*SIZE] = vector[i];
+  }
   *fpga_ip = 0x5555;
   while (*fpga_ip == 0x5555);
   for (i = 0; i < SIZE; ++i) {
