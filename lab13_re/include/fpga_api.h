@@ -8,7 +8,7 @@
 // vector V: SIZE
 // output = M * V
 
-#define SIZE 512 // input,output vector size
+#define SIZE 64 // input,output vector size
 
 class FPGA
 {

@@ -3,7 +3,6 @@
 #include <cstdio>
 #include <cstdlib>
 
-#define SIZE 64
 #define DATA_SIZE SIZE*(SIZE+1) // fpga bram data size
 
 #define min(x,y) (((x)<(y))?(x):(y))
