@@ -6,8 +6,8 @@
 
 FPGA::FPGA(off_t data_addr, off_t api_addr)
 {
-    api_ = new unsigned int[SIZE];    // use api_ as tempolar output 
-    data_ = new float[DATA_SIZE];	
+    api_ = new unsigned int[SIZE];    // use api_ as tempolar output
+    data_ = new float[DATA_SIZE];
 }
 
 FPGA::~FPGA()
@@ -30,7 +30,7 @@ const float* FPGA::run()
 {
     float* vec = this->vector();
     float* mat = this->matrix();
-    float* out  = reinterpret_cast<float*>(api_);  
+    float* out  = reinterpret_cast<float*>(api_);
 
     for(int i = 0 ; i < SIZE; ++i)
     {
@@ -45,35 +45,35 @@ const float* FPGA::run()
 		data_[i] = out[i];
 	}
 
-    return data_;    
+    return data_;
 }
 
 void FPGA::largeMV(const float* large_mat, const float* input,
 		float* output, int M, int N)
 {
 	memset(output, 0, sizeof(float)*N);
-	
+
 	float* vec = this->vector();
-    float* mat = this->matrix();
-	
+  float* mat = this->matrix();
+
 	for(int n = 0; n < N ; n += SIZE)
 	{
 		for(int m = 0; m < M ; m += SIZE)
-		{			
+		{
 			int n_remain = min(SIZE, N-n);
 			int m_remain = min(SIZE, M-m);
-			
+
 			// initialize input vector		
 			memcpy(vec, input + m,  sizeof(float)*m_remain);
-			memset(vec + m_remain, 0, sizeof(float)*(SIZE - m_remain));			
-			
+			memset(vec + m_remain, 0, sizeof(float)*(SIZE - m_remain));
+
 			// initialize matrix
 			for(int nn = 0; nn < n_remain; ++nn)
 			{
 				memcpy(mat + SIZE*nn, large_mat + m + M*(n+nn), sizeof(float)*m_remain);
 				memset(mat + SIZE*nn + m_remain, 0, sizeof(float)*(SIZE - m_remain));
 			}
-			
+
 			for(int nn = n_remain; nn < SIZE; ++nn)
 			{
 				memset(mat + SIZE*nn, 0, sizeof(float)*SIZE);
@@ -85,6 +85,6 @@ void FPGA::largeMV(const float* large_mat, const float* input,
 			{
 				output[n + nn] += rst[nn];
 			}
-		} 
+		}
 	}
 }
